@@ -60,7 +60,7 @@ func FillDatabase(listApps []App) {
 
 func GetAppByGuid(appGuid string) []App {
 	var apps []App
-	app := gcfClient.AppByGuid(appGuid)
+	app, _ := gcfClient.AppByGuid(appGuid)
 	apps = append(apps, App{app.Name, app.Guid, app.SpaceData.Entity.Name, app.SpaceData.Entity.Guid, app.SpaceData.Entity.OrgData.Entity.Name, app.SpaceData.Entity.OrgData.Entity.Guid})
 	FillDatabase(apps)
 	return apps
@@ -77,8 +77,10 @@ func GetAllApp() []App {
 			log.LogError("Recovered in caching.GetAllApp()", r)
 		}
 	}()
+	
+	returnedApps, _ := gcfClient.ListApps()
 
-	for _, app := range gcfClient.ListApps() {
+	for _, app := range returnedApps {
 		log.LogStd(fmt.Sprintf("App [%s] Found...", app.Name), false)
 		apps = append(apps, App{app.Name, app.Guid, app.SpaceData.Entity.Name, app.SpaceData.Entity.Guid, app.SpaceData.Entity.OrgData.Entity.Name, app.SpaceData.Entity.OrgData.Entity.Guid})
 	}
